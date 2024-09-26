@@ -4,6 +4,8 @@ export const ProductStore = defineStore('products', {
     state: () => ({
         products:[], 
         cart:[],
+        tip: 0,
+        uniqueCode: 0,
     }),
     getters: {
         getTotalinCart(state){
@@ -16,21 +18,32 @@ export const ProductStore = defineStore('products', {
             return (id) => state.cart.filter((item) => item.id === id).reduce((acc,item) => acc + item.quantity, 0);
         },
         getBiayaLayanan(state){
-            let biaya = 5000;
-            let hitungan = state.countTotalInCart / 50;
+            return this.toCurrencyFormat(this.countBiayaLayanan);
+        },
+        countBiayaLayanan(){
+            let biaya = 2000;
+            if(this.countTotalInCart > 50000) biaya = 5000;
+            
+            let hitungan = this.countTotalInCart / 50;
             if(hitungan > biaya)
                 biaya = hitungan;
-            return this.toCurrencyFormat(biaya);
+            return biaya;
         },
         countTotalInCart(state){
             return state.cart.reduce((acc,cart) => acc + (cart.quantity * cart.price), 0);
+        },
+        getTipValue(state){
+            return this.toCurrencyFormat(state.tip);
+        },
+        getTotalBelanja(){
+            return this.toCurrencyFormat(this.countTotalInCart + Number(this.tip) + this.countBiayaLayanan + this.uniqueCode);
         }
     },
     actions: {
         async fetchProductList(){
-            if (localStorage.getItem("list_product")) {
-                this.products = JSON.parse(localStorage.getItem("list_product"));
-            }else{
+            // if (localStorage.getItem("list_product")) {
+                // this.products = JSON.parse(localStorage.getItem("list_product"));
+            // }else{
                 this.products = [
                     {
                         "category" : "Se'i Babi",
@@ -91,9 +104,9 @@ export const ProductStore = defineStore('products', {
                                 "title": "Sambal Luat Pedes Unik 300gr",
                                 "description": "Sei babi asap aroma adalah makanan khas ASLI dari Kupang NTT.",
                                 "category": "Sambal Luat",
-                                "price": 300000,
-                                "discountPercentage": 6.25,
-                                "basePrice": 320000,
+                                "price": 30000,
+                                "discountPercentage": 0,
+                                "basePrice": 300000,
                                 "tags": [
                                     "pedes maksimal"
                                 ],
@@ -105,7 +118,7 @@ export const ProductStore = defineStore('products', {
                                 "title": "Seí Babi Asli Kupang 1/2 KG",
                                 "description": "Sei babi asap aroma adalah makanan khas ASLI dari Kupang NTT.",
                                 "category": "Sambal Luat",
-                                "price": 160000,
+                                "price": 16000,
                                 "discountPercentage": 0,
                                 "basePrice" : 160000,
                                 "tags": [
@@ -124,8 +137,8 @@ export const ProductStore = defineStore('products', {
                 //     console.log(json.products)
                 //     this.products = json.products;
                 // })
-                localStorage.setItem('list_product', JSON.stringify(this.products));
-            }
+                // localStorage.setItem('list_product', JSON.stringify(this.products));
+            // }
         },
         setCartItem(){
             localStorage.setItem('cart_list', JSON.stringify(this.cart));            
@@ -133,7 +146,11 @@ export const ProductStore = defineStore('products', {
         getCartItem(){
             if(localStorage.getItem("cart_list")){            
                 this.cart = JSON.parse(localStorage.getItem("cart_list"));
-            }
+            };
+            if(localStorage.getItem("tip")){            
+                this.tip = JSON.parse(localStorage.getItem("tip"));
+            };
+            this.generateRandomNumber();
         },
         addToCart(itemId){
             let index = this.cart.findIndex(product => product.id === itemId);
@@ -147,6 +164,13 @@ export const ProductStore = defineStore('products', {
                 }
             }
             this.setCartItem();
+        },
+        setTipValue(value){
+            if(value == this.tip)
+                this.tip = 0;
+            else
+                this.tip = value;
+            localStorage.setItem('tip', JSON.stringify(this.tip));
         },
         findById (id, product, idx = 0){
             const item = product[idx].lists;
@@ -170,5 +194,9 @@ export const ProductStore = defineStore('products', {
         toCurrencyFormat(number){
             return new Intl.NumberFormat('id-ID').format(number);
         },
+        generateRandomNumber(){
+            this.uniqueCode = Math.floor((Math.random()*99) + 1);
+        },
+
     }
 });

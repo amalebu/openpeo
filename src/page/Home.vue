@@ -1,13 +1,12 @@
 <script setup>
 import ProductList from '@/components/ProductList.vue';
 import Header from '@/components/Header.vue';
-import BottomCart from '@/components/BottomCart.vue';
 
 </script>
 <template>
     <div class="flex items-center justify-center">
       <div class="fixed inset-0 h-[calc(50svh)] w-full -z-50">
-        <img src="https://assets.promediateknologi.id/crop/36x715:681x1116/750x500/webp/photo/2022/12/15/3210744714.jpg" alt="" class="w-full h-full object-cover rotate-180">
+        <img src="https://awsimages.detik.net.id/community/media/visual/2018/12/08/525a5f7b-41ba-4013-9692-cc57f0319fcd.jpeg?w=600&q=90" alt="" class="w-full h-full object-cover">
       </div>
       <div class="mt-[17.5svh] max-w-screen-2xl">
         <Header></Header>
@@ -15,6 +14,5 @@ import BottomCart from '@/components/BottomCart.vue';
           <ProductList></ProductList>
         </div>
       </div>
-      <BottomCart></BottomCart>
     </div>
 </template>
